@@ -1,0 +1,84 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f2f5;
+    font-family: sans-serif;
+}
+
+.clock {
+    width: 300px;
+    height: 300px;
+    background-color: white;
+    border-radius: 50%;
+    border: 15px solid #333;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    transform: translateX(-50%) rotate(0deg);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    z-index: 10;
+}
+
+.hour-hand {
+    width: 8px;
+    height: 80px;
+    background-color: #333;
+}
+
+.minute-hand {
+    width: 6px;
+    height: 110px;
+    background-color: #666;
+}
+
+.second-hand {
+    width: 2px;
+    height: 120px;
+    background-color: #e74c3c;
+    z-index: 11;
+}
+
+.center-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 12;
+}
+
+/* Markers styling */
+.marker, .marker-sub {
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    transform-origin: 50% 140px; /* (Clock radius - marker top) */
+}
+
+.marker {
+    width: 4px;
+    height: 15px;
+    background-color: #333;
+    margin-left: -2px;
+}
+
+.marker-sub {
+    width: 2px;
+    height: 8px;
+    background-color: #999;
+    margin-left: -1px;
+}
+

@@ -1,0 +1,237 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #0a0a0a;
+    font-family: 'Arial', sans-serif;
+}
+
+.clock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.clock {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    border-radius: 50%;
+}
+
+/* Marcadores de horas */
+.hour-marker {
+    position: absolute;
+    color: #ffd700;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px rgba(255, 215, 0, 0.5);
+    transform-origin: center;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+}
+
+/* Marcadores con números (3, 6, 9, 12) */
+.hour-12 {
+    transform: translate(0, -180px);
+}
+
+.hour-3 {
+    transform: translate(180px, 0);
+}
+
+.hour-6 {
+    transform: translate(0, 180px);
+}
+
+.hour-9 {
+    transform: translate(-180px, 0);
+}
+
+/* Marcadores con forma de diamante (resto de horas) */
+.hour-1::before,
+.hour-2::before,
+.hour-4::before,
+.hour-5::before,
+.hour-7::before,
+.hour-8::before,
+.hour-10::before,
+.hour-11::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #ffd700;
+    box-shadow: 0 0 6px #ffd700, 0 0 12px #ffd700, 0 0 18px rgba(255, 215, 0, 0.5);
+    transform: rotate(45deg);
+    border-radius: 1px;
+}
+
+.hour-1 {
+    transform: translate(93px, -155px);
+}
+
+.hour-2 {
+    transform: translate(155px, -93px);
+}
+
+.hour-4 {
+    transform: translate(155px, 93px);
+}
+
+.hour-5 {
+    transform: translate(93px, 155px);
+}
+
+.hour-7 {
+    transform: translate(-93px, 155px);
+}
+
+.hour-8 {
+    transform: translate(-155px, 93px);
+}
+
+.hour-10 {
+    transform: translate(-155px, -93px);
+}
+
+.hour-11 {
+    transform: translate(-93px, -155px);
+}
+
+/* Manecillas */
+.hand {
+    position: absolute;
+    transform-origin: center bottom;
+    top: 50%;
+    left: 50%;
+    border-radius: 2px;
+    transition: transform 0.05s cubic-bezier(0.4, 2.3, 0.8, 1);
+}
+
+.hour-hand {
+    width: 8px;
+    height: 100px;
+    background-color: #00aaff;
+    box-shadow: 0 0 8px #00aaff, 0 0 16px rgba(0, 170, 255, 0.6);
+    transform: translate(-50%, -100%);
+    border-radius: 4px 4px 0 0;
+}
+
+.minute-hand {
+    width: 10px;
+    height: 140px;
+    background-color: #ffffcc;
+    box-shadow: 0 0 8px #ffffcc, 0 0 16px rgba(255, 255, 204, 0.6);
+    transform: translate(-50%, -100%);
+    border-radius: 5px 5px 0 0;
+}
+
+.second-hand {
+    width: 2px;
+    height: 160px;
+    background-color: #00aaff;
+    box-shadow: 0 0 6px #00aaff, 0 0 12px rgba(0, 170, 255, 0.5);
+    transform: translate(-50%, -100%);
+}
+
+/* Centro del reloj */
+.center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #ffd700;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #ffd700;
+    z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .clock {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .hour-12 {
+        transform: translate(0, -135px);
+    }
+    
+    .hour-3 {
+        transform: translate(135px, 0);
+    }
+    
+    .hour-6 {
+        transform: translate(0, 135px);
+    }
+    
+    .hour-9 {
+        transform: translate(-135px, 0);
+    }
+    
+    .hour-1 {
+        transform: translate(70px, -116px);
+    }
+    
+    .hour-2 {
+        transform: translate(116px, -70px);
+    }
+    
+    .hour-4 {
+        transform: translate(116px, 70px);
+    }
+    
+    .hour-5 {
+        transform: translate(70px, 116px);
+    }
+    
+    .hour-7 {
+        transform: translate(-70px, 116px);
+    }
+    
+    .hour-8 {
+        transform: translate(-116px, 70px);
+    }
+    
+    .hour-10 {
+        transform: translate(-116px, -70px);
+    }
+    
+    .hour-11 {
+        transform: translate(-70px, -116px);
+    }
+    
+    .hour-hand {
+        height: 75px;
+        transform: translate(-50%, -100%);
+    }
+    
+    .minute-hand {
+        height: 105px;
+        transform: translate(-50%, -100%);
+    }
+    
+    .second-hand {
+        height: 120px;
+        transform: translate(-50%, -100%);
+    }
+}
+

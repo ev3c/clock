@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reloj Clásico TVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Orbitron:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a12 0%, #0d0d1a 50%, #080810 100%);
+            font-family: 'Playfair Display', serif;
+            overflow: hidden;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* Efecto de ruido CRT sutil */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 1000;
+        }
+
+        /* Reloj Digital */
+        .digital-clock {
+            font-family: 'Orbitron', monospace;
+            font-size: 72px;
+            font-weight: 700;
+            color: #d4a84b;
+            text-shadow: 
+                0 0 20px rgba(212, 168, 75, 0.8),
+                0 0 40px rgba(212, 168, 75, 0.5),
+                0 0 60px rgba(212, 168, 75, 0.3);
+            letter-spacing: 8px;
+            background: rgba(10, 10, 20, 0.6);
+            padding: 20px 40px;
+            border-radius: 10px;
+            border: 2px solid rgba(212, 168, 75, 0.3);
+            box-shadow: 
+                0 0 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .digital-clock .separator {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .clock-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+
+        .clock {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, #12121f 0%, #0a0a14 70%, #050508 100%);
+            box-shadow: 
+                0 0 60px rgba(0, 0, 0, 0.8),
+                inset 0 0 80px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Números principales */
+        .number {
+            position: absolute;
+            font-size: 42px;
+            font-weight: 500;
+            color: #d4a84b;
+            text-shadow: 
+                0 0 10px rgba(212, 168, 75, 0.5),
+                0 0 20px rgba(212, 168, 75, 0.3);
+            transform: translate(-50%, -50%);
+        }
+
+        .number-12 {
+            top: 12%;
+            left: 50%;
+        }
+
+        .number-3 {
+            top: 50%;
+            right: 8%;
+            left: auto;
+            transform: translate(0, -50%);
+        }
+
+        .number-6 {
+            bottom: 8%;
+            left: 50%;
+            top: auto;
+            transform: translate(-50%, 0);
+        }
+
+        .number-9 {
+            top: 50%;
+            left: 12%;
+            transform: translate(0, -50%);
+        }
+
+        /* Marcadores de diamante */
+        .marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #d4a84b;
+            transform: translate(-50%, -50%) rotate(45deg);
+            box-shadow: 
+                0 0 8px rgba(212, 168, 75, 0.6),
+                0 0 15px rgba(212, 168, 75, 0.3);
+        }
+
+        .marker-1 { top: 18%; left: 75%; }
+        .marker-2 { top: 25%; left: 82%; }
+        .marker-4 { top: 75%; left: 82%; }
+        .marker-5 { top: 82%; left: 75%; }
+        .marker-7 { top: 82%; left: 25%; }
+        .marker-8 { top: 75%; left: 18%; }
+        .marker-10 { top: 25%; left: 18%; }
+        .marker-11 { top: 18%; left: 25%; }
+
+        /* Centro del reloj */
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #e8d5a3 0%, #c9a94f 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(212, 168, 75, 0.5);
+        }
+
+        /* Manecillas */
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 110px;
+            background: linear-gradient(to top, #c9a94f 0%, #e8d5a3 50%, #c9a94f 100%);
+            margin-left: -4px;
+            z-index: 30;
+            box-shadow: 
+                2px 2px 8px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(212, 168, 75, 0.3);
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 160px;
+            background: linear-gradient(to top, #c9a94f 0%, #e8d5a3 50%, #c9a94f 100%);
+            margin-left: -3px;
+            z-index: 40;
+            box-shadow: 
+                2px 2px 8px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(212, 168, 75, 0.3);
+        }
+
+        .second-hand {
+            width: 3px;
+            height: 180px;
+            background: linear-gradient(to top, #2a5fc7 0%, #4a8fff 50%, #2a5fc7 100%);
+            margin-left: -1.5px;
+            z-index: 50;
+            box-shadow: 
+                0 0 10px rgba(74, 143, 255, 0.8),
+                0 0 20px rgba(74, 143, 255, 0.5),
+                0 0 30px rgba(74, 143, 255, 0.3);
+        }
+
+        /* Efecto de brillo en la manecilla de segundos */
+        .second-hand::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, transparent 0%, rgba(74, 143, 255, 0.6) 100%);
+            border-radius: 4px;
+        }
+
+        /* Efecto de viñeta */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+        }
+
+        /* Control de velocidad */
+        .speed-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 20, 0.6);
+            padding: 20px 40px;
+            border-radius: 10px;
+            border: 2px solid rgba(212, 168, 75, 0.3);
+            box-shadow: 
+                0 0 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .speed-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            color: #d4a84b;
+            text-shadow: 0 0 10px rgba(212, 168, 75, 0.5);
+        }
+
+        .speed-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: #4a8fff;
+            text-shadow: 
+                0 0 15px rgba(74, 143, 255, 0.8),
+                0 0 30px rgba(74, 143, 255, 0.5);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .slider-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: rgba(212, 168, 75, 0.7);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 300px;
+            height: 8px;
+            background: linear-gradient(to right, #1a1a2e, #2a5fc7);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #e8d5a3 0%, #c9a94f 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 
+                0 0 10px rgba(212, 168, 75, 0.8),
+                0 0 20px rgba(212, 168, 75, 0.5);
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #e8d5a3 0%, #c9a94f 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 
+                0 0 10px rgba(212, 168, 75, 0.8),
+                0 0 20px rgba(212, 168, 75, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .digital-clock {
+                font-size: 36px;
+                padding: 15px 25px;
+                letter-spacing: 4px;
+            }
+
+            .clock-container {
+                width: 320px;
+                height: 320px;
+            }
+            
+            .number {
+                font-size: 28px;
+            }
+            
+            .marker {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .hour-hand {
+                height: 70px;
+                width: 6px;
+                margin-left: -3px;
+            }
+            
+            .minute-hand {
+                height: 100px;
+                width: 4px;
+                margin-left: -2px;
+            }
+            
+            .second-hand {
+                height: 115px;
+                width: 2px;
+                margin-left: -1px;
+            }
+
+            input[type="range"] {
+                width: 200px;
+            }
+
+            .speed-control {
+                padding: 15px 20px;
+            }
+
+            .speed-value {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Reloj Digital -->
+    <div class="digital-clock" id="digitalClock">
+        <span id="hours">00</span><span class="separator">:</span><span id="minutes">00</span><span class="separator">:</span><span id="seconds">00</span>
+    </div>
+
+    <div class="clock-container">
+        <div class="clock">
+            <!-- Números principales -->
+            <div class="number number-12">12</div>
+            <div class="number number-3">3</div>
+            <div class="number number-6">6</div>
+            <div class="number number-9">9</div>
+            
+            <!-- Marcadores de diamante -->
+            <div class="marker marker-1"></div>
+            <div class="marker marker-2"></div>
+            <div class="marker marker-4"></div>
+            <div class="marker marker-5"></div>
+            <div class="marker marker-7"></div>
+            <div class="marker marker-8"></div>
+            <div class="marker marker-10"></div>
+            <div class="marker marker-11"></div>
+            
+            <!-- Manecillas -->
+            <div class="hand hour-hand" id="hour"></div>
+            <div class="hand minute-hand" id="minute"></div>
+            <div class="hand second-hand" id="second"></div>
+            
+            <!-- Centro -->
+            <div class="center"></div>
+            
+            <!-- Efecto viñeta -->
+            <div class="vignette"></div>
+        </div>
+    </div>
+
+    <!-- Control de velocidad -->
+    <div class="speed-control">
+        <div class="speed-label">Velocidad del Segundero</div>
+        <div class="speed-value" id="speedValue">x1</div>
+        <div class="slider-container">
+            <span class="slider-label">x1</span>
+            <input type="range" id="speedSlider" min="1" max="100" value="1">
+            <span class="slider-label">x100</span>
+        </div>
+    </div>
+
+    <script>
+        // Variables para el tiempo simulado
+        let simulatedTime = new Date();
+        let lastUpdate = Date.now();
+        let speed = 1;
+
+        // Elementos del DOM
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        // Actualizar velocidad
+        speedSlider.addEventListener('input', (e) => {
+            speed = parseInt(e.target.value);
+            speedValue.textContent = `x${speed}`;
+        });
+
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function updateClock() {
+            const now = Date.now();
+            const delta = now - lastUpdate;
+            lastUpdate = now;
+
+            // Añadir tiempo simulado según la velocidad
+            simulatedTime = new Date(simulatedTime.getTime() + delta * speed);
+
+            const hours = simulatedTime.getHours();
+            const minutes = simulatedTime.getMinutes();
+            const seconds = simulatedTime.getSeconds();
+            const milliseconds = simulatedTime.getMilliseconds();
+
+            // Actualizar reloj digital
+            hoursEl.textContent = padZero(hours);
+            minutesEl.textContent = padZero(minutes);
+            secondsEl.textContent = padZero(seconds);
+
+            // Cálculo suave para los segundos (incluye milisegundos)
+            const secondDeg = ((seconds + milliseconds / 1000) / 60) * 360;
+            
+            // Cálculo suave para los minutos
+            const minuteDeg = ((minutes + seconds / 60) / 60) * 360;
+            
+            // Cálculo suave para las horas (reloj de 12 horas)
+            const hourDeg = ((hours % 12 + minutes / 60) / 12) * 360;
+
+            // Aplicar rotaciones
+            document.getElementById('hour').style.transform = `rotate(${hourDeg}deg)`;
+            document.getElementById('minute').style.transform = `rotate(${minuteDeg}deg)`;
+            document.getElementById('second').style.transform = `rotate(${secondDeg}deg)`;
+        }
+
+        // Actualizar inmediatamente
+        updateClock();
+
+        // Actualizar cada 16ms para animación suave (aproximadamente 60fps)
+        setInterval(updateClock, 16);
+    </script>
+</body>
+</html>
